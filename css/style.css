@@ -1,0 +1,273 @@
+/* =========================================================
+   CESBANK — Design tokens
+   A quiet, ledger-inspired minimal theme for a bank system.
+   ========================================================= */
+:root {
+    /* Color */
+    --cb-bg:        #F7F8FA;
+    --cb-surface:   #FFFFFF;
+    --cb-border:    #E3E7ED;
+    --cb-ink:       #12172B;
+    --cb-muted:     #6B7280;
+    --cb-accent:    #1F4FD8;
+    --cb-accent-ink:#12296B;
+    --cb-success:   #1C8A5D;
+    --cb-danger:    #D63A3A;
+    --cb-warning:   #C98A1F;
+
+    /* Type */
+    --cb-font-display: 'Sora', sans-serif;
+    --cb-font-body:    'Inter', sans-serif;
+    --cb-font-mono:    'JetBrains Mono', monospace;
+
+    /* Layout */
+    --cb-radius: 10px;
+    --cb-radius-sm: 6px;
+    --cb-shadow: 0 1px 2px rgba(18, 23, 43, 0.04), 0 8px 24px -12px rgba(18, 23, 43, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+}
+
+body {
+    background: var(--cb-bg);
+    color: var(--cb-ink);
+    font-family: var(--cb-font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .cb-font-display {
+    font-family: var(--cb-font-display);
+    color: var(--cb-ink);
+    letter-spacing: -0.01em;
+}
+
+/* Tabular figures: money and account numbers always use the mono face
+   so digits line up in columns — a small ledger-book detail. */
+.cb-figure, .cb-mono, td.cb-amount, .cb-account-number {
+    font-family: var(--cb-font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+a { color: var(--cb-accent); text-decoration: none; }
+a:hover { color: var(--cb-accent-ink); }
+
+:focus-visible {
+    outline: 2px solid var(--cb-accent);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   Navbar
+   ========================================================= */
+.cb-navbar {
+    background: var(--cb-surface);
+    border-bottom: 1px solid var(--cb-border);
+    padding: 0.65rem 0;
+}
+
+.cb-brand {
+    font-family: var(--cb-font-display);
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--cb-ink) !important;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.cb-brand-mark {
+    color: var(--cb-accent);
+}
+
+.cb-brand-lg {
+    font-size: 2rem;
+}
+
+.cb-role-pill {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--cb-accent-ink);
+    background: rgba(31, 79, 216, 0.08);
+    border: 1px solid rgba(31, 79, 216, 0.18);
+    border-radius: 999px;
+    padding: 0.28rem 0.7rem;
+}
+
+.cb-main {
+    padding: 1.75rem;
+}
+
+/* =========================================================
+   Cards, surfaces
+   ========================================================= */
+.card, .cb-card {
+    background: var(--cb-surface);
+    border: 1px solid var(--cb-border);
+    border-radius: var(--cb-radius);
+    box-shadow: var(--cb-shadow);
+}
+
+.cb-section-title {
+    font-family: var(--cb-font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    padding-bottom: 0.6rem;
+    margin-bottom: 1rem;
+    border-bottom: 3px double var(--cb-border); /* ledger double-rule */
+}
+
+/* =========================================================
+   Forms & buttons
+   ========================================================= */
+.form-label {
+    font-weight: 500;
+    font-size: 0.85rem;
+    color: var(--cb-muted);
+}
+
+.cb-input, .form-control, .form-select {
+    border: 1px solid var(--cb-border);
+    border-radius: var(--cb-radius-sm);
+    padding: 0.55rem 0.85rem;
+    font-size: 0.9rem;
+    background: var(--cb-surface);
+}
+
+.cb-input:focus, .form-control:focus, .form-select:focus {
+    border-color: var(--cb-accent);
+    box-shadow: 0 0 0 3px rgba(31, 79, 216, 0.12);
+}
+
+.cb-btn-primary, .btn-primary {
+    background: var(--cb-accent);
+    border-color: var(--cb-accent);
+    color: #fff;
+    font-weight: 600;
+    border-radius: var(--cb-radius-sm);
+    padding: 0.6rem 1rem;
+    transition: background-color .15s ease;
+}
+
+.cb-btn-primary:hover, .btn-primary:hover {
+    background: var(--cb-accent-ink);
+    border-color: var(--cb-accent-ink);
+}
+
+.cb-btn-toggle {
+    border: 1px solid var(--cb-border);
+    background: var(--cb-surface);
+    color: var(--cb-muted);
+}
+
+.badge-status-active   { color: var(--cb-success); background: rgba(28,138,93,0.10); }
+.badge-status-inactive,
+.badge-status-closed    { color: var(--cb-danger);  background: rgba(214,58,58,0.10); }
+.badge-status-pending   { color: var(--cb-warning); background: rgba(201,138,31,0.10); }
+
+/* =========================================================
+   Auth / login screen — split ledger layout
+   ========================================================= */
+.cb-auth-body {
+    margin: 0;
+    background: var(--cb-bg);
+}
+
+.cb-auth-shell {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+}
+
+.cb-auth-ledger {
+    background: var(--cb-ink);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 3rem;
+}
+
+.cb-auth-ledger-inner {
+    max-width: 380px;
+    position: relative;
+    z-index: 1;
+}
+
+.cb-auth-ledger .cb-brand-lg {
+    color: #fff !important;
+}
+
+.cb-auth-ledger .cb-brand-mark {
+    color: #6E93F5;
+}
+
+.cb-auth-tagline {
+    color: rgba(255,255,255,0.72);
+    font-size: 0.95rem;
+    margin-top: 0.9rem;
+    line-height: 1.6;
+}
+
+/* Faint ledger ruling in the background — the signature detail */
+.cb-ledger-lines {
+    position: absolute;
+    inset: auto -20% -30% -20%;
+    display: grid;
+    gap: 26px;
+    transform: rotate(-4deg);
+    z-index: 0;
+}
+
+.cb-ledger-lines div {
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+}
+
+.cb-auth-form-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.cb-auth-form {
+    width: 100%;
+    max-width: 360px;
+}
+
+.cb-auth-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.cb-auth-subtitle {
+    color: var(--cb-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.75rem;
+}
+
+@media (max-width: 900px) {
+    .cb-auth-shell {
+        grid-template-columns: 1fr;
+    }
+    .cb-auth-ledger {
+        padding: 2.5rem 1.5rem;
+        min-height: 240px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+}
