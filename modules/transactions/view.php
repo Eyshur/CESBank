@@ -1,0 +1,8 @@
+<?php
+require_once __DIR__ . '/../../auth/guard.php';
+require_once __DIR__ . '/../../models/Transaction.php';
+cb_require_role(['Administrator', 'Employee', 'Customer']);
+$transaction = (new Transaction())->findWithDetails((int)($_GET['id'] ?? 0), $_SESSION['user_id'], $_SESSION['role']);
+if (!$transaction) { echo '<p class="text-danger mb-0">Transaction not found or unavailable.</p>'; exit; }
+?>
+<div class="row g-3"><div class="col-md-6"><div class="text-muted small">Transaction ID</div><div class="cb-mono">#<?= (int)$transaction['transaction_id'] ?></div></div><div class="col-md-6"><div class="text-muted small">Date</div><div><?= date('M d, Y g:i A', strtotime($transaction['transaction_date'])) ?></div></div><div class="col-md-6"><div class="text-muted small">Type</div><div><?= htmlspecialchars($transaction['transaction_type']) ?></div></div><div class="col-md-6"><div class="text-muted small">Amount</div><div class="cb-figure fw-semibold">â‚±<?= number_format($transaction['amount'], 2) ?></div></div><div class="col-md-6"><div class="text-muted small">Account</div><div class="cb-account-number"><?= htmlspecialchars($transaction['account_number']) ?></div></div><?php if ($transaction['receiver_account_number']): ?><div class="col-md-6"><div class="text-muted small">Other Account</div><div class="cb-account-number"><?= htmlspecialchars($transaction['receiver_account_number']) ?></div></div><?php endif; ?><div class="col-12"><div class="text-muted small">Remarks</div><div><?= nl2br(htmlspecialchars($transaction['remarks'] ?: 'â€”')) ?></div></div></div><div class="d-flex justify-content-end mt-4"><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button></div>

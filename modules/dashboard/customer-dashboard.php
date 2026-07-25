@@ -76,8 +76,8 @@ require_once __DIR__ . '/../../layout/header.php';
         </div>
         <div class="col-md-4">
             <div class="cb-card p-3 h-100 d-flex flex-column justify-content-center">
-                <a href="/CESBANK/modules/transactions/create.php" class="btn cb-btn-primary">
-                    <i class="bi bi-arrow-left-right me-1"></i> Request a Transaction
+                <a href="/CESBANK/modules/transactions/index.php" class="btn cb-btn-primary">
+                    <i class="bi bi-arrow-left-right me-1"></i> Manage Transactions
                 </a>
             </div>
         </div>

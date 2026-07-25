@@ -1,7 +1,7 @@
 </main>
 
 <!-- jQuery CDN -->
-<script src="js/jquery.min.js"></script>
+<script src="/CESBANK/js/jquery.min.js"></script>
 
 <!-- Bootstrap 5 Bundle (includes Popper) CDN -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -69,5 +69,10 @@
         Swal.close();
     }
 </script>
+<?php if (!empty($pageScripts)): ?>
+    <?php foreach ($pageScripts as $script): ?>
+        <script src="<?= htmlspecialchars($script) ?>"></script>
+    <?php endforeach; ?>
+<?php endif; ?>
 </body>
 </html>
