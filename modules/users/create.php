@@ -27,8 +27,7 @@ require_once __DIR__ . '/../../layout/header.php';
             <div class="col-md-6">
                 <label class="form-label">Role</label>
                 <select class="form-select cb-input" name="role" id="roleSelect" required>
-                    <option value="">Select role…</option>
-                    <option value="Administrator">Administrator</option>
+                    <option value="" hidden>Select role…</option>
                     <option value="Employee">Employee</option>
                     <option value="Customer">Customer</option>
                 </select>
@@ -61,7 +60,7 @@ require_once __DIR__ . '/../../layout/header.php';
                 <div class="col-md-4">
                     <label class="form-label">Gender</label>
                     <select class="form-select cb-input" name="gender">
-                        <option value="">Select…</option>
+                        <option value="" hidden>Select…</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>

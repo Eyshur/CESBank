@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../auth/guard.php';
 require_once __DIR__ . '/../../models/Reports.php';
 require_once __DIR__ . '/../../lib/fpdf/fpdf.php';
 
-cb_require_role(['Administrator']);
+cb_require_role(['Administrator', 'Employee']);
 
 $reports = new Reports();
 
