@@ -49,25 +49,25 @@ require_once __DIR__ . '/../../layout/header.php';
     <div class="col-6 col-lg-3">
         <div class="cb-card p-3 h-100">
             <div class="text-muted small mb-1">Customers</div>
-            <div class="cb-figure fs-3 fw-semibold"><?= number_format($totalCustomers) ?></div>
+            <div class="cb-figure fs-3 fw-semibold text-primary"><?= number_format($totalCustomers) ?></div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="cb-card p-3 h-100">
             <div class="text-muted small mb-1">Active Accounts</div>
-            <div class="cb-figure fs-3 fw-semibold"><?= number_format($totalAccounts) ?></div>
+            <div class="cb-figure fs-3 fw-semibold text-info"><?= number_format($totalAccounts) ?></div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="cb-card p-3 h-100">
             <div class="text-muted small mb-1">Total Deposits Held</div>
-            <div class="cb-figure fs-4 fw-semibold">₱<?= number_format($totalBalance, 2) ?></div>
+            <div class="cb-figure fs-4 fw-semibold text-success">₱<?= number_format($totalBalance, 2) ?></div>
         </div>
     </div>
     <div class="col-6 col-lg-3">
         <div class="cb-card p-3 h-100">
             <div class="text-muted small mb-1">Pending Loan Applications</div>
-            <div class="cb-figure fs-3 fw-semibold"><?= number_format($pendingLoans) ?></div>
+            <div class="cb-figure fs-3 fw-semibold text-warning"><?= number_format($pendingLoans) ?></div>
         </div>
     </div>
 </div>

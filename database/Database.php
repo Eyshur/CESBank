@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Asia/Manila');
+
 class Database
 {
     private static ?Database $instance = null;
