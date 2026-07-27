@@ -34,9 +34,6 @@ class ReportPDF extends FPDF
         $this->SetFont('Helvetica','B',15);
         $this->Cell(0,8,$this->reportTitle,0,1,'C');
 
-        $this->SetFont('Helvetica','',10);
-        $this->Cell(0, 8, $this->reportTitle, 0, 1, 'C');
-
         $this->SetFont('Helvetica', '', 10);
 
         if ($this->dateRange !== '') {
