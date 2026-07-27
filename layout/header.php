@@ -51,6 +51,7 @@ $role      = $_SESSION['role'] ?? null;
                     <li class="nav-item"><a class="nav-link" href="/CESBANK/modules/reports/index.php">Reports</a></li>
                 <?php elseif ($role === 'Employee'): ?>
                     <li class="nav-item"><a class="nav-link" href="/CESBANK/modules/dashboard/teller-dashboard.php">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/CESBANK/modules/users/index.php">Customers</a></li>
                     <li class="nav-item"><a class="nav-link" href="/CESBANK/modules/transactions/index.php">Transactions</a></li>
                 <?php else: ?>
                     <li class="nav-item"><a class="nav-link" href="/CESBANK/modules/dashboard/customer-dashboard.php">Dashboard</a></li>

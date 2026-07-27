@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Immutable banking ledger operations.
  * Every balance update and its transaction record are committed together.
@@ -94,13 +95,21 @@ class Transaction extends Model
             }
 
             $transactionId = $this->create([
-                'account_id' => $accountId, 'transaction_type' => $type, 'amount' => $amount,
-                'receiver_id' => $receiverId, 'transaction_date' => date('Y-m-d H:i:s'), 'remarks' => $remarks,
+                'account_id' => $accountId,
+                'transaction_type' => $type,
+                'amount' => $amount,
+                'receiver_id' => $receiverId,
+                'transaction_date' => date('Y-m-d H:i:s'),
+                'remarks' => $remarks,
             ]);
             if ($type === 'Transfer') {
                 $this->create([
-                    'account_id' => $receiverId, 'transaction_type' => 'Transfer', 'amount' => $amount,
-                    'receiver_id' => $accountId, 'transaction_date' => date('Y-m-d H:i:s'), 'remarks' => 'Transfer received' . ($remarks !== '' ? ': ' . $remarks : ''),
+                    'account_id' => $receiverId,
+                    'transaction_type' => 'Transfer',
+                    'amount' => $amount,
+                    'receiver_id' => $accountId,
+                    'transaction_date' => date('Y-m-d H:i:s'),
+                    'remarks' => 'Transfer received' . ($remarks !== '' ? ': ' . $remarks : ''),
                 ]);
             }
             $this->db->commit();
@@ -119,5 +128,47 @@ class Transaction extends Model
     private function changeBalance(int $accountId, float $change): void
     {
         $this->raw('UPDATE accounts SET balance = balance + :change WHERE account_id = :id', ['change' => $change, 'id' => $accountId]);
+    }
+
+    public function createAccount(int $customerId, string $accountType, float $openingBalance): array
+    {
+        if (!in_array($accountType, ['Savings', 'Current'], true)) {
+            throw new InvalidArgumentException('Invalid account type.');
+        }
+        if ($openingBalance < 0) {
+            throw new InvalidArgumentException('Opening balance cannot be negative.');
+        }
+
+        $accountNumber = $this->generateAccountNumber();
+
+        $this->raw(
+            "INSERT INTO accounts (customer_id, account_number, account_type, balance, status, created_at)
+         VALUES (:customer_id, :account_number, :account_type, :balance, 'Active', NOW())",
+            [
+                'customer_id'    => $customerId,
+                'account_number' => $accountNumber,
+                'account_type'   => $accountType,
+                'balance'        => $openingBalance,
+            ]
+        );
+
+        return [
+            'account_id'     => (int) $this->db->lastInsertId(),
+            'account_number' => $accountNumber,
+        ];
+    }
+
+    private function generateAccountNumber(): string
+    {
+        do {
+            // 10-digit account number, e.g. 4520193847
+            $candidate = (string) random_int(1000000000, 9999999999);
+            $exists = $this->raw(
+                "SELECT COUNT(*) AS c FROM accounts WHERE account_number = :n",
+                ['n' => $candidate]
+            )->fetch()['c'];
+        } while ((int) $exists > 0);
+
+        return $candidate;
     }
 }

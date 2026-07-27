@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../auth/guard.php';
 require_once __DIR__ . '/../../database/Database.php';
 
-cb_require_role(['Administrator']);
+cb_require_role(['Administrator', 'Employee']);
 
 /**
  * AJAX branch: returns the filtered user list as JSON.
@@ -55,9 +55,11 @@ require_once __DIR__ . '/../../layout/header.php';
         <h1 class="h4 mb-1">Users &amp; Customers</h1>
         <p class="text-muted mb-0">Manage login accounts for staff and customers.</p>
     </div>
-    <button type="button" class="btn cb-btn-primary" id="btnAddUser">
-        <i class="bi bi-person-plus me-1"></i> Add User
-    </button>
+    <?php if ($_SESSION['role'] === 'Administrator'): ?>
+        <a href="create.php" class="btn cb-btn-primary">
+            <i class="bi bi-person-plus me-1"></i> Add User
+        </a>
+    <?php endif; ?>
 </div>
 
 <div class="cb-card p-3 mb-3">
@@ -96,29 +98,11 @@ require_once __DIR__ . '/../../layout/header.php';
     </div>
 </div>
 
-<!-- Shared modal used for Add / Edit / View — body is swapped in via AJAX -->
-<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="userModalTitle">User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" id="userModalBody">
-                <!-- fragment loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+    window.CB_ROLE = <?= json_encode($_SESSION['role']) ?>;
+</script>
 
 <?php
-// Page-specific JS: set $pageScripts = ['/CESBANK/js/users.js']; before including
-// this file. Loaded here, after jQuery/Bootstrap/SweetAlert2 are already on the page.
-if (!empty($pageScripts)) {
-    foreach ($pageScripts as $script) {
-        echo '<script src="' . htmlspecialchars($script) . '"></script>' . "\n";
-    }
-}
+$pageScripts = ['/CESBANK/js/users.js'];
+require_once __DIR__ . '/../../layout/footer.php';
 ?>
-
-<?php require_once __DIR__ . '/../../layout/footer.php'; ?>

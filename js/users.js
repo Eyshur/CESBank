@@ -1,17 +1,15 @@
 /**
  * users.js
- * Drives the Users & Customers management page: loads the table via AJAX,
- * opens the shared modal for Add/Edit/View, and wires up status toggle
- * and delete with SweetAlert2 confirmations. Relies on cbToast/cbAlert/
- * cbConfirm/cbLoading helpers defined in layout/footer.php.
+ * Drives the Users & Customers index table: loads rows via AJAX, wires up
+ * search/filter, and handles status toggle + delete with SweetAlert2
+ * confirmations. View/Edit/Add are plain page links (view.php, edit.php,
+ * create.php) — no modal involved.
  */
 
 $(function () {
     const $tableBody   = $('#usersTableBody');
     const $searchInput = $('#searchInput');
     const $roleFilter  = $('#roleFilter');
-    const userModalEl  = document.getElementById('userModal');
-    const userModal    = new bootstrap.Modal(userModalEl);
 
     let searchTimer = null;
 
@@ -19,11 +17,13 @@ $(function () {
         return `<span class="badge rounded-pill badge-status-${status.toLowerCase()}">${status}</span>`;
     }
 
+    function esc(text) {
+        return $('<div>').text(text ?? '').html();
+    }
+
     function renderRow(row) {
         const isCustomer = !!row.customer_id;
-        const displayName = isCustomer
-            ? `${row.first_name} ${row.last_name}`
-            : row.username;
+        const displayName = isCustomer ? `${row.first_name} ${row.last_name}` : row.username;
         const subLine = isCustomer ? row.username : '—';
         const contact = isCustomer ? (row.email || row.contact_no || '—') : '—';
         const created = new Date(row.created_at).toLocaleDateString('en-US', {
@@ -31,32 +31,36 @@ $(function () {
         });
         const nextStatus = row.status === 'Active' ? 'Inactive' : 'Active';
         const statusIcon = row.status === 'Active' ? 'bi-slash-circle' : 'bi-check-circle';
+        const isAdmin = window.CB_ROLE === 'Administrator';
+
+        const actions = `
+            <a href="view.php?id=${row.user_id}" class="btn btn-outline-secondary" title="View">
+                <i class="bi bi-eye"></i>
+            </a>
+            ${isAdmin ? `
+            <a href="edit.php?id=${row.user_id}" class="btn btn-outline-secondary" title="Edit">
+                <i class="bi bi-pencil"></i>
+            </a>
+            <button class="btn btn-outline-secondary btn-status" title="${nextStatus === 'Active' ? 'Activate' : 'Deactivate'}" data-next-status="${nextStatus}">
+                <i class="bi ${statusIcon}"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-delete" title="Delete">
+                <i class="bi bi-trash"></i>
+            </button>` : ''}
+        `;
 
         return `
             <tr data-id="${row.user_id}">
                 <td class="ps-3">
-                    <div class="fw-medium">${$('<div>').text(displayName).html()}</div>
-                    <div class="text-muted small">${$('<div>').text(subLine).html()}</div>
+                    <div class="fw-medium">${esc(displayName)}</div>
+                    <div class="text-muted small">${esc(subLine)}</div>
                 </td>
                 <td><span class="text-muted small">${row.role}</span></td>
-                <td class="small">${$('<div>').text(contact).html()}</td>
+                <td class="small">${esc(contact)}</td>
                 <td>${statusBadge(row.status)}</td>
                 <td class="text-muted small cb-mono">${created}</td>
                 <td class="text-end pe-3">
-                    <div class="btn-group btn-group-sm">
-                        <button class="btn btn-outline-secondary btn-view" title="View">
-                            <i class="bi bi-eye"></i>
-                        </button>
-                        <button class="btn btn-outline-secondary btn-edit" title="Edit">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-outline-secondary btn-status" title="${nextStatus === 'Active' ? 'Activate' : 'Deactivate'}" data-next-status="${nextStatus}">
-                            <i class="bi ${statusIcon}"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-delete" title="Delete">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
+                    <div class="btn-group btn-group-sm">${actions}</div>
                 </td>
             </tr>`;
     }
@@ -80,18 +84,6 @@ $(function () {
         });
     }
 
-    function openModal(title, url, submitLabel) {
-        $('#userModalTitle').text(title);
-        $('#userModalBody').html('<div class="text-center text-muted py-4">Loading…</div>');
-        userModal.show();
-
-        $.get(url).done(function (html) {
-            $('#userModalBody').html(html);
-        }).fail(function () {
-            $('#userModalBody').html('<p class="text-danger mb-0">Could not load this form. Please try again.</p>');
-        });
-    }
-
     // ---- Toolbar ----
     $searchInput.on('input', function () {
         clearTimeout(searchTimer);
@@ -100,21 +92,7 @@ $(function () {
 
     $roleFilter.on('change', loadUsers);
 
-    $('#btnAddUser').on('click', function () {
-        openModal('Add User', 'create.php');
-    });
-
     // ---- Row actions (delegated, since rows are re-rendered) ----
-    $tableBody.on('click', '.btn-view', function () {
-        const id = $(this).closest('tr').data('id');
-        openModal('User Details', `view.php?id=${id}`);
-    });
-
-    $tableBody.on('click', '.btn-edit', function () {
-        const id = $(this).closest('tr').data('id');
-        openModal('Edit User', `edit.php?id=${id}`);
-    });
-
     $tableBody.on('click', '.btn-status', function () {
         const $row = $(this).closest('tr');
         const id = $row.data('id');
@@ -158,47 +136,6 @@ $(function () {
                     cbAlert('error', 'Something went wrong', 'Please try again.');
                 });
         });
-    });
-
-    // ---- Modal form: role toggle + submit (delegated, form is injected) ----
-    $('#userModalBody').on('change', '#roleSelect', function () {
-        $('#customerFields').toggleClass('d-none', $(this).val() !== 'Customer');
-    });
-
-    $('#userModalBody').on('submit', '#userForm', function (e) {
-        e.preventDefault();
-
-        const $form = $(this);
-        const mode = $form.data('mode');
-        const url = mode === 'edit' ? 'update.php' : 'store.php';
-        const data = $form.serializeArray().reduce((acc, f) => {
-            acc[f.name] = f.value;
-            return acc;
-        }, {});
-
-        if (mode === 'edit') {
-            data.user_id = $form.data('user-id');
-        }
-
-        const $btn = $('#userFormSubmit');
-        $btn.prop('disabled', true);
-
-        $.post(url, data)
-            .done(function (res) {
-                if (res.success) {
-                    userModal.hide();
-                    cbToast('success', res.message);
-                    loadUsers();
-                } else {
-                    cbAlert('error', mode === 'edit' ? 'Could not save changes' : 'Could not create user', res.message);
-                }
-            })
-            .fail(function () {
-                cbAlert('error', 'Something went wrong', 'Please try again.');
-            })
-            .always(function () {
-                $btn.prop('disabled', false);
-            });
     });
 
     loadUsers();
