@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../auth/guard.php';
 require_once __DIR__ . '/../../models/User.php';
 
-cb_require_role(['Administrator']);
+cb_require_role(['Administrator', 'Employee']);
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -11,10 +11,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+$isAdmin = $_SESSION['role'] === 'Administrator';
+
 $username = trim($_POST['username'] ?? '');
 $password = (string) ($_POST['password'] ?? '');
-$role     = $_POST['role'] ?? '';
-$status   = $_POST['status'] ?? 'Active';
+
+// Employees can only ever create Customer accounts. This is enforced here
+// regardless of what's actually submitted — the "disabled" fields in the
+// form are a UI hint, not a security boundary, since anyone can edit
+// hidden/disabled input values in DevTools before submitting.
+$role   = $isAdmin ? ($_POST['role'] ?? '') : 'Customer';
+$status = $isAdmin ? ($_POST['status'] ?? 'Active') : 'Active';
 
 $errors = [];
 

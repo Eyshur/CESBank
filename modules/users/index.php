@@ -55,11 +55,9 @@ require_once __DIR__ . '/../../layout/header.php';
         <h1 class="h4 mb-1">Users &amp; Customers</h1>
         <p class="text-muted mb-0">Manage login accounts for staff and customers.</p>
     </div>
-    <?php if ($_SESSION['role'] === 'Administrator'): ?>
-        <a href="create.php" class="btn cb-btn-primary">
-            <i class="bi bi-person-plus me-1"></i> Add User
-        </a>
-    <?php endif; ?>
+    <a href="create.php" class="btn cb-btn-primary">
+        <i class="bi bi-person-plus me-1"></i> <?= $_SESSION['role'] === 'Administrator' ? 'Add User' : 'Register Customer' ?>
+    </a>
 </div>
 
 <div class="cb-card p-3 mb-3">
